@@ -1,0 +1,169 @@
+﻿@page "/"
+
+@using Radzen.Blazor
+@using Data
+@using Radzen;
+@using System.Diagnostics;
+@inject IJSRuntime JS
+
+<PageTitle>Form</PageTitle>
+
+<RadzenStack Gap="30px" Orientation="Radzen.Orientation.Vertical">
+    <RadzenStack Gap="5px">
+        <h1 style="text-align:center">Registazione Squadra Green Volley</h1>
+        <h4 style="text-align:center">Borg in Fieste Sant'Antonio (Fiumicello)</h4>
+    </RadzenStack>
+
+    <RadzenStack Gap="3px">
+        <RadzenText TextStyle="TextStyle.Subtitle2" >Nome Squadra</RadzenText>
+        <RadzenTextBox Style="width:auto" @bind-Value=teamName/>
+    </RadzenStack>
+
+    <RadzenStack Gap="3px">
+        <RadzenText TextStyle="TextStyle.Subtitle2">Numero Atleti</RadzenText>
+        <RadzenNumeric Min="4" Max="6" Style="width:auto" TValue="int" @bind-Value="nAthletes" Change=@(_ => NumericUpdated())/>
+    </RadzenStack>
+
+    <RadzenDataGrid @ref="dataGrid" TItem="Athlete" EditMode="Radzen.DataGridEditMode.Single" Data="athletes" RowUpdate="@OnUpdateRow">
+        <Columns>
+            <RadzenDataGridColumn TItem="Athlete" Property="Cognome" Title="COGNOME">
+                <EditTemplate Context="athlete">
+                    <RadzenTextBox @bind-Value="athlete.Cognome" Style="width:100%; display: block" Name="Cognome" />
+                    <RadzenRequiredValidator Text="Il cognome deve essere inserito" Component="Cognome" Popup="true" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Athlete" Property="Nome" Title="NOME">
+                <EditTemplate Context="athlete">
+                    <RadzenTextBox @bind-Value="athlete.Nome" Style="width:100%; display: block" Name="Nome" />
+                    <RadzenRequiredValidator Text="Il nome deve essere inserito" Component="Nome" Popup="true" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Athlete" Property="DataDiNascita" Title="DATA DI NASCITA">
+                <EditTemplate Context="athlete">
+                    <RadzenTextBox @bind-Value="athlete.DataDiNascita" Style="width:100%; display: block" Name="DataDiNascita" />
+                    <RadzenRequiredValidator Text="La data di nascita deve essere inserita" Component="DataDiNascita" Popup="true" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Athlete" Property="TagliaMaglia" Title="TAGLIA MAGLIA">
+                <EditTemplate Context="athlete">
+                    <RadzenTextBox @bind-Value="athlete.TagliaMaglia" Style="width:100%; display: block" Name="TagliaMaglia" />
+                    <RadzenRequiredValidator Text="La taglia della maglia deve essere inserita" Component="TagliaMaglia" Popup="true" />
+                </EditTemplate>
+            </RadzenDataGridColumn>
+            <RadzenDataGridColumn TItem="Athlete" Context="athlete" Width="60px">
+                <Template Context="athlete">
+                    <RadzenButton Icon="edit" ButtonStyle="ButtonStyle.Light" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@(args => EditRow(athlete))" @onclick:stopPropagation="true">
+                    </RadzenButton>
+                </Template>
+                <EditTemplate Context="athlete">
+                    <RadzenButton Icon="check" ButtonStyle="ButtonStyle.Success" Variant="Variant.Flat" Size="ButtonSize.Medium" Click="@((args) => SaveRow(athlete))">
+                    </RadzenButton>
+                </EditTemplate>
+            </RadzenDataGridColumn>
+        </Columns>
+    </RadzenDataGrid>
+
+    <RadzenStack Gap="5px">
+        <RadzenText TextStyle="TextStyle.H4">Dati Responsabile Squadra</RadzenText>
+        <RadzenRow>
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Nome e Cognome</RadzenText>
+                <RadzenTextBox @bind-Value=@nomecognomeResp/>
+            </RadzenCard>
+            <RadzenCard>
+                <RadzenText TextStyle="TextStyle.Subtitle2" TagName="TagName.H3">Numero di Telefono</RadzenText>
+                <RadzenTextBox @bind-Value=@numeroResp />
+            </RadzenCard>
+        </RadzenRow>
+    </RadzenStack>
+
+    <RadzenCard>
+        <RadzenText TextStyle="TextStyle.H4">Modulo per Atleti Minorenni</RadzenText>
+        <RadzenButton Text="Download" Click=@(args => DownloadClick())/>
+        <InputFile OnChange="HandleFileUpload"/>
+    </RadzenCard>
+
+    <RadzenButton Style="align-self:end" Click="ConfirmForm">INVIA</RadzenButton>
+
+</RadzenStack>
+
+
+@code {
+    string teamName = string.Empty;
+    string nomecognomeResp = string.Empty;
+    string numeroResp = string.Empty;
+    List<IBrowserFile> autorizzazioneMinori = new();
+
+    int nAthletes = 4;
+    List<Athlete> athletes = new List<Athlete>();
+
+    Athlete rowToUpdate;
+
+    RadzenDataGrid<Athlete> dataGrid;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        while (athletes.Count < nAthletes)
+        {
+            athletes.Add(new Athlete());
+        }
+    }
+
+    async Task NumericUpdated()
+    {
+        if (athletes.Count < nAthletes)
+        {
+            while(athletes.Count < nAthletes)
+            {
+                athletes.Add(new Athlete());
+            }
+        }
+        else
+        {
+            while(athletes.Count > nAthletes)
+            {
+                athletes.RemoveAt(athletes.Count - 1);
+            }
+        }
+        await dataGrid.Reload();
+    }
+
+    async Task EditRow(Athlete athlete)
+    {
+        rowToUpdate = athlete;
+        await dataGrid.EditRow(athlete);
+    }
+
+    void OnUpdateRow(Athlete athlete)
+    {
+        int index = athletes.IndexOf(rowToUpdate);
+        rowToUpdate = null;
+        athletes[index] = athlete;
+    }
+
+    async Task SaveRow(Athlete athlete)
+    {
+        await dataGrid.UpdateRow(athlete);
+    }
+
+    async Task DownloadClick()
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = "https://drive.google.com//file//d//1Fzb6gwbqwiLLi-HTgge-mjR3eB5sEOPA//view?usp=share_link",
+            UseShellExecute = true
+        });
+    }
+
+    async Task HandleFileUpload(InputFileChangeEventArgs e)
+    {
+        autorizzazioneMinori = e.GetMultipleFiles().ToList();
+    }
+
+    async Task ConfirmForm()
+    {
+        ToBeExported export = new (teamName, athletes, nomecognomeResp, numeroResp, autorizzazioneMinori);
+        ExportToPdf.CreatePdfAsync(export);
+    }
+}
