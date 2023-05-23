@@ -5,6 +5,9 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using MimeKit;
 using Microsoft.AspNetCore.Components.Forms;
+using iText.IO.Image;
+using iText.Kernel.Pdf.Canvas;
+using iText.Kernel.Geom;
 
 namespace GreenVolley.FrontEnd.Data
 {
@@ -54,8 +57,18 @@ namespace GreenVolley.FrontEnd.Data
                 {
                     foreach (var file in data.browserFiles)
                     {
-                        var attachmentData = await GetFileDataAsync(file);
-                        AddPdfPages(pdfDocument, attachmentData);
+                        var fileExtension = System.IO.Path.GetExtension(file.Name);
+
+                        if (fileExtension == ".pdf")
+                        {
+                            var attachmentData = await GetFileDataAsync(file);
+                            AddPdfPages(pdfDocument, attachmentData);
+                        }
+                        else if (IsImageFile(fileExtension))
+                        {
+                            var imageData = await GetFileDataAsync(file);
+                            AddImagePage(pdfDocument, imageData);
+                        }
                     }
                 }
             }
@@ -101,12 +114,35 @@ namespace GreenVolley.FrontEnd.Data
             }
         }
 
+        private static bool IsImageFile(string fileExtension)
+        {
+            var imageExtensions = new[] { ".jpg", ".jpeg", ".png", ".gif" };
+            return imageExtensions.Contains(fileExtension, StringComparer.OrdinalIgnoreCase);
+        }
+
         private async static Task<byte[]> GetFileDataAsync(IBrowserFile file)
         {
             using (var memoryStream = new MemoryStream())
             {
                 await file.OpenReadStream().CopyToAsync(memoryStream);
                 return memoryStream.ToArray();
+            }
+        }
+        private static void AddImagePage(PdfDocument pdfDocument, byte[] imageData)
+        {
+            var newPage = pdfDocument.AddNewPage();
+
+            using (var memoryStream = new MemoryStream(imageData))
+            {
+                var image = new Image(ImageDataFactory.Create(imageData));
+                image.ScaleToFit(newPage.GetPageSize().GetWidth(), newPage.GetPageSize().GetHeight());
+
+                var canvas = new PdfCanvas(newPage);
+                var rect = new Rectangle(0, 0, newPage.GetPageSize().GetWidth(), newPage.GetPageSize().GetHeight());
+
+                var xObj = new Canvas(canvas, rect, false);
+                xObj.Add(image);
+                xObj.Flush();
             }
         }
 

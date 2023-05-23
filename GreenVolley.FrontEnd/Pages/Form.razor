@@ -5,6 +5,7 @@
 @using Radzen;
 @using System.Diagnostics;
 @inject IJSRuntime JS
+@inject NotificationService NotificationService
 
 <PageTitle>Form</PageTitle>
 
@@ -159,11 +160,14 @@
     async Task HandleFileUpload(InputFileChangeEventArgs e)
     {
         autorizzazioneMinori = e.GetMultipleFiles().ToList();
+        NotificationService.Notify(NotificationSeverity.Success, "File caricato!", "File caricato con successo. Adesso puoi confermare la registazione.");
     }
 
     async Task ConfirmForm()
     {
         ToBeExported export = new (teamName, athletes, nomecognomeResp, numeroResp, autorizzazioneMinori);
+        NotificationService.Notify(NotificationSeverity.Info, "Registrazione in esecuzione", "La tua registrazione sta venendo processata, se non vedi la conferma fra pochi secondi assicurati di aver caricato tutto correttamente");
         ExportToPdf.CreatePdfAsync(export);
+        NotificationService.Notify(NotificationSeverity.Success, "Registrazione effettuata", "Registrazione effettuata con successo! Grazie per la partecipazione");
     }
 }
