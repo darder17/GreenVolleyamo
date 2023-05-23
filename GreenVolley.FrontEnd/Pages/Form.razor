@@ -80,16 +80,22 @@
 
     <RadzenCard>
         <RadzenCard>
-            <RadzenText TextStyle="TextStyle.H4">Modulo per Atleti Minorenni</RadzenText>
-            <RadzenButton Text="Download" Click=@(args => DownloadUnderageClick()) />
+            <RadzenText TextStyle="TextStyle.H5">Modulo per Atleti Minorenni</RadzenText>
+            <RadzenLink Path="https://drive.google.com//file//d//1Fzb6gwbqwiLLi-HTgge-mjR3eB5sEOPA//view?usp=share_link" target="_blank">
+                <RadzenButton Text="Download"/>
+            </RadzenLink>
         </RadzenCard>
         <RadzenCard>
-            <RadzenText TextStyle="TextStyle.H4">Regolamento</RadzenText>
-            <RadzenButton Text="Download" Click=@(args => DownloadRulesClick()) />
+            <RadzenText TextStyle="TextStyle.H5">Regolamento</RadzenText>
+            <RadzenLink Path="https://drive.google.com/file/d/11yx0xywcKpYKyQ7tTTZee9_aNhbIaLZA/view?usp=sharing" target="_blank">
+                <RadzenButton Text="Download" />
+            </RadzenLink>
         </RadzenCard>
         <RadzenCard>
-            <RadzenText TextStyle="TextStyle.H4">Modulo Autodichiarazione Salute</RadzenText>
-            <RadzenButton Text="Download" Click=@(args => DownloadStatusClick()) />
+            <RadzenText TextStyle="TextStyle.H5">Modulo Autodichiarazione Salute</RadzenText>
+            <RadzenLink Path="https://drive.google.com/file/d/1G935ntz-YH5x10CAbS1G_4MX7_Rlp_xh/view?usp=sharing" target="_blank">
+                <RadzenButton Text="Download" />
+            </RadzenLink>
         </RadzenCard>
         <InputFile OnChange="HandleFileUpload" />
     </RadzenCard>
@@ -158,32 +164,23 @@
         await dataGrid.UpdateRow(athlete);
     }
 
-    async Task DownloadUnderageClick()
-    {
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = "https://drive.google.com//file//d//1Fzb6gwbqwiLLi-HTgge-mjR3eB5sEOPA//view?usp=share_link",
-            UseShellExecute = true
-        });
-    }
+    //async Task DownloadUnderageClick()
+    //{
+    //    var fileName = "https://drive.google.com//file//d//1Fzb6gwbqwiLLi-HTgge-mjR3eB5sEOPA//view?usp=share_link";
+    //    NavigationManager.NavigateTo(fileName, true);
+    //}
 
-    async Task DownloadRulesClick()
-    {
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = "https://drive.google.com/file/d/11yx0xywcKpYKyQ7tTTZee9_aNhbIaLZA/view?usp=sharing",
-            UseShellExecute = true
-        });
-    }
+    //async Task DownloadRulesClick()
+    //{
+    //    var fileName = "https://drive.google.com/file/d/11yx0xywcKpYKyQ7tTTZee9_aNhbIaLZA/view?usp=sharing";
+    //    NavigationManager.NavigateTo(fileName, true);
+    //}
 
-    async Task DownloadStatusClick()
-    {
-        Process.Start(new ProcessStartInfo
-        {
-            FileName = "https://drive.google.com/file/d/1G935ntz-YH5x10CAbS1G_4MX7_Rlp_xh/view?usp=sharing",
-            UseShellExecute = true
-        });
-    }
+    //async Task DownloadStatusClick()
+    //{
+    //    var fileName = "https://drive.google.com/file/d/1G935ntz-YH5x10CAbS1G_4MX7_Rlp_xh/view?usp=sharing";
+    //    NavigationManager.NavigateTo(fileName, true);
+    //}
 
     async Task HandleFileUpload(InputFileChangeEventArgs e)
     {
