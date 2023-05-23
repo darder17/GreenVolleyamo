@@ -79,9 +79,19 @@
     </RadzenStack>
 
     <RadzenCard>
-        <RadzenText TextStyle="TextStyle.H4">Modulo per Atleti Minorenni</RadzenText>
-        <RadzenButton Text="Download" Click=@(args => DownloadClick())/>
-        <InputFile OnChange="HandleFileUpload"/>
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4">Modulo per Atleti Minorenni</RadzenText>
+            <RadzenButton Text="Download" Click=@(args => DownloadUnderageClick()) />
+        </RadzenCard>
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4">Regolamento</RadzenText>
+            <RadzenButton Text="Download" Click=@(args => DownloadRulesClick()) />
+        </RadzenCard>
+        <RadzenCard>
+            <RadzenText TextStyle="TextStyle.H4">Modulo Autodichiarazione Salute</RadzenText>
+            <RadzenButton Text="Download" Click=@(args => DownloadStatusClick()) />
+        </RadzenCard>
+        <InputFile OnChange="HandleFileUpload" />
     </RadzenCard>
 
     <RadzenButton Style="align-self:end" Click="ConfirmForm">INVIA</RadzenButton>
@@ -148,11 +158,29 @@
         await dataGrid.UpdateRow(athlete);
     }
 
-    async Task DownloadClick()
+    async Task DownloadUnderageClick()
     {
         Process.Start(new ProcessStartInfo
         {
             FileName = "https://drive.google.com//file//d//1Fzb6gwbqwiLLi-HTgge-mjR3eB5sEOPA//view?usp=share_link",
+            UseShellExecute = true
+        });
+    }
+
+    async Task DownloadRulesClick()
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = "https://drive.google.com/file/d/11yx0xywcKpYKyQ7tTTZee9_aNhbIaLZA/view?usp=sharing",
+            UseShellExecute = true
+        });
+    }
+
+    async Task DownloadStatusClick()
+    {
+        Process.Start(new ProcessStartInfo
+        {
+            FileName = "https://drive.google.com/file/d/1G935ntz-YH5x10CAbS1G_4MX7_Rlp_xh/view?usp=sharing",
             UseShellExecute = true
         });
     }
