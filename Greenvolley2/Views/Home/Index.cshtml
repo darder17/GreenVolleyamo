@@ -1,0 +1,128 @@
+﻿@model SquadraDTO
+
+<div class="hero-section text-center">
+    <div class="container">
+        <h1 class="display-4 fw-bold">Borg in Fiesta 2026</h1>
+        <p class="lead">Le iscrizioni sono aperte! Registra la tua squadra per scendere in campo.</p>
+        <div class="d-flex justify-content-center gap-3 mt-4">
+            <span><i class="fas fa-calendar-alt"></i> 13 Giugno</span>
+            <span><i class="fas fa-map-marker-alt"></i> San Valentino di Fiumicello</span>
+            <span><i class="fas fa-users"></i> 4v4 Misto</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card p-4 mb-5">
+                <h3 class="mb-4 text-center">Modulo Iscrizione Squadra</h3>
+
+                <form asp-action="Register" method="post" enctype="multipart/form-data">    
+                    <div class="row g-3">
+                        <div class="col-12">
+                            <label class="form-label fw-bold">Nome della Squadra</label>
+                            <input type="text" asp-for="NomeSquadra" class="form-control form-control-lg" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Nome Responsabile / Capitano</label>
+                            <input type="text" asp-for="NomeResponsabile" class="form-control" required>
+                        </div>
+
+                        <div class="col-md-6">
+                            <label class="form-label">Numero di telefono</label>
+                            <input type="tel" asp-for="TelefonoReponsabile" class="form-control" required>
+                        </div>
+
+                        <div class="col-12 mt-4">
+                            <h5 class="border-bottom pb-2">Componenti della Squadra</h5>
+
+                            <div class="table-responsive">
+                                <table class="table table-bordered table-hover align-middle">
+                                    <thead class="table-light text-center">
+                                        <tr>
+                                            <th scope="col" style="width: 5%;">#</th>
+                                            <th scope="col" style="width: 25%;">Nome</th>
+                                            <th scope="col" style="width: 25%;">Cognome</th>
+                                            <th scope="col" style="width: 25%;">Data di Nascita</th>
+                                            <th scope="col" style="width: 20%;">Taglia</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        @for (int i = 0; i < 6; i++)
+                                        {
+                                            // Rende obbligatori solo i primi 4 giocatori (titolari)
+                                            var isRequired = i < 4;
+
+                                            <tr>
+                                                <td class="text-center fw-bold text-muted">@(i + 1)</td>
+                                                <td>
+                                                    <input type="text" asp-for="Atleti[i].Nome" class="form-control form-control-sm" required="@isRequired">
+                                                </td>
+                                                <td>
+                                                    <input type="text" asp-for="Atleti[i].Cognome" class="form-control form-control-sm" required="@isRequired">
+                                                </td>
+                                                <td>
+                                                    <input type="date" asp-for="Atleti[i].DataDiNascita" class="form-control form-control-sm" required="@isRequired">
+                                                </td>
+                                                <td>
+                                                    <select asp-for="Atleti[i].TagliaMaglia" class="form-select form-select-sm" required="@isRequired">
+                                                        <option value="">Scegli...</option>
+                                                        <option value="S">S</option>
+                                                        <option value="M">M</option>
+                                                        <option value="L">L</option>
+                                                        <option value="XL">XL</option>
+                                                        <option value="XXL">XXL</option>
+                                                    </select>
+                                                </td>
+                                            </tr>
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div class="row mt-5">
+                            <div class="col-12">
+                                <h5 class="border-bottom pb-2 mb-3">Documentazione e Allegati</h5>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label d-block fw-bold mb-3">1. Scarica i moduli necessari</label>
+                                <div class="d-grid gap-2">
+                                    <a href="/docs/Regolamento.pdf" class="btn btn-outline-secondary text-start" download>
+                                        <i class="fas fa-file-pdf me-2 text-danger"></i> Scarica Regolamento
+                                    </a>
+                                    <a href="/docs/Autodichiarazione_Salute.pdf" class="btn btn-outline-secondary text-start" download>
+                                        <i class="fas fa-file-pdf me-2 text-danger"></i> Scarica Autodichiarazione Salute
+                                    </a>
+                                    <a href="/docs/Liberatoria_Minori.pdf" class="btn btn-outline-secondary text-start" download>
+                                        <i class="fas fa-file-pdf me-2 text-danger"></i> Scarica Liberatoria Minorenni
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="col-md-6 mb-4">
+                                <label class="form-label fw-bold mb-3">2. Allega i documenti compilati</label>
+                                <div class="p-4 border border-dashed rounded bg-light text-center" style="border: 2px dashed #ccc !important;">
+                                    <i class="fas fa-cloud-upload-alt fa-3x text-muted mb-3"></i>
+                                    <p class="small text-muted">Trascina qui i file o clicca per selezionarli</p>
+                                    <input type="file" asp-for="Allegati" class="form-control" multiple
+                                            accept=".pdf,.jpg,.png" />
+                                    <div class="form-text mt-2">Puoi selezionare più file (PDF, JPG o PNG)</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-12 d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg shadow">
+                                <i class="fas fa-check-circle me-2"></i>Invia Iscrizione e Documenti
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
